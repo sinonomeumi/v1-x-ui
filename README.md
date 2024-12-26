@@ -18,10 +18,18 @@
 ## 一、实现serv00帐号定时保活（keep_serv00_ssh.yml），默认每5天定时保活
 找到项目点 Settings -> 左边点 Secrets and variables -> 点 Actions -> 在 Secrets 增加下面变量,根据自己的数据填 
 - 帐号信息变量（必填）：SSH_ACCOUNTS 
+一台服务器例子
 ```
 [
-  {"ip": "s8.com", "username": "test", "password": "tzCOu"},
-  {"ip": "s9.com", "username": "abc", "password": "yTev"}
+  {"ip": "服务器IP", "username": "服务器用户名", "password": "服务器密码"}
+]
+```
+多台服务器例子
+```
+[
+  {"ip": "服务器IP", "username": "服务器用户名", "password": "服务器密码"}
+  {"ip": "s8.serv00.com", "username": "test", "password": "tzCOu"},
+  {"ip": "s9.serv00.com", "username": "abc", "password": "xyz"},
 ]
 ```
 - TG通知变量（非必填）：CHAT_ID
@@ -36,6 +44,9 @@
 ## 二、实现serv00、socks5、vmess节点等自动外部保活（keep_serv00.yml），默认每5小时保活
 找到项目点 Settings -> 左边点 Secrets and variables -> 点 Actions -> 在 Secrets 增加下面变量,根据自己的数据填
 - 应用信息变量（必填）：SERVERS_JSON
+1、基本格式1为："IP或域名,用户名,密码":"服务标识,服务端口;vmess(服务标识符),vmess端口,Argo隧道域名,Argo隧道token或json;"
+2、Argo隧道格式2为："IP或域名,用户名,密码":"服务标识,服务端口,Argo隧道域名,Argo隧道token或json"
+socks5标识(s5)、vmess标识(vmess)、x-ui标识(x-ui)、哪吒面板标识(nezha-dashboard)、哪吒探针标识(nezha-agent)
 ```
 {
     "s8.serv00.com,username1,password1":"s5,10000",
@@ -44,14 +55,19 @@
 }
 
 ```
-1、格式为："IP/域名,用户名,密码":"s5(socket5标识符),socket5端口;vmess(服务标识符),vmess端口,Argo隧道域名,Argo隧道token或json;nezha-dashboard(服务标识符),vmess端口"
 - 例如：部署一台服务器，socks5一个应用
 ```
 {
-    "s8.serv00.com,username1,password1":"s5,10000"
+    "s8.serv00.com,username1,password1":"s5,s5应用端口"
+}
+- 例如：部署一台服务器，vmess+Argo隧道一个应用
+```
+{
+    "s8.serv00.com,username1,password1":"vmess,vmess应用端口,Argo隧道域名,Argo隧道token或json"
 }
 ```
-- 例如：部署一台服务器，socks5、vmess两个应用
+```
+- 例如：部署一台服务器，socks5、vmess+Argo隧道两个应用
 ```
 {
     "s8.serv00.com,username1,password1":"s5,10000;vmess,50000,vmess.abc.xyz,token"
