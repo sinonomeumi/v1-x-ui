@@ -44,8 +44,11 @@
 ## 二、实现serv00、socks5、vmess节点等自动外部保活（keep_serv00.yml），默认每5小时保活
 找到项目点 Settings -> 左边点 Secrets and variables -> 点 Actions -> 在 Secrets 增加下面变量,根据自己的数据填
 - 应用信息变量（必填）：SERVERS_JSON
+
 1、基本格式1为："IP或域名,用户名,密码":"服务标识,服务端口;vmess(服务标识符),vmess端口,Argo隧道域名,Argo隧道token或json;"
+
 2、Argo隧道格式2为："IP或域名,用户名,密码":"服务标识,服务端口,Argo隧道域名,Argo隧道token或json"
+
 socks5标识(s5)、vmess标识(vmess)、x-ui标识(x-ui)、哪吒面板标识(nezha-dashboard)、哪吒探针标识(nezha-agent)
 ```
 {
