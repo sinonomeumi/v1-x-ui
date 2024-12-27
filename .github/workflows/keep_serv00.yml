@@ -21,7 +21,7 @@ jobs:
       - name: Install jq
         run: sudo apt-get install -y jq 
 
-      - name: Execute SSH Login Script
+      - name: Execute keep_serv00 Script
         run: |
           echo "$SERVERS_JSON" > servers.json
           chmod +x ./keep_serv00.sh 
