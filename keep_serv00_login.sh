@@ -52,8 +52,8 @@ echo "::info::总共有 $total_accounts 个用户"
 echo "----------------------------"
 
 if [ "$total_accounts" -eq 0 ]; then
-    echo "::error::没有找到用户账户，请检查 accounts.json 的格式"
-    send_telegram_message "serv00激活失败: $username@$ip"
+    echo "::error::没有找到用户账户，请检查 SSH_ACCOUNTS 变量的格式"
+    send_telegram_message "🔴serv00激活失败: 没有找到用户账户，请检查 SSH_ACCOUNTS 变量的格式"
     exit 1
 fi
 
@@ -70,17 +70,19 @@ for account in $accounts; do
 
     if [ -z "$username" ] || [ -z "$ip" ]; then
         echo "::error::发现空的用户名或 IP，无法连接"
-        send_telegram_message "serv00激活失败: $username@$ip"
+	send_telegram_message "🔴serv00激活失败:发现空的用户名或 IP，无法连接，请检查 SSH_ACCOUNTS 变量的格式"
         continue
     fi
 
     echo "正在连接 $username@$ip ..."
     if sshpass -p "$password" ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o ConnectTimeout=60 -o ServerAliveInterval=30 -o ServerAliveCountMax=2 -tt "$username@$ip" "sleep 3; exit"; then
         echo "成功激活 $username@$ip"
+	send_telegram_message "🟢serv00成功激活:$username@$ip"
+ 	#send_telegram_message "🟢serv00成功激活:$ip"
     else
         echo "连接激活 $username@$ip 失败"
-        send_telegram_message "serv00激活失败: $username@$ip"
+	send_telegram_message "🔴serv00激活失败: $username@$ip"
+	#send_telegram_message "🔴serv00激活失败:$ip"
     fi
     echo "----------------------------"
 done
-
