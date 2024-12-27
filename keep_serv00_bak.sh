@@ -21,14 +21,14 @@ base_url="https://raw.githubusercontent.com/amclubs"
 # 发送 Telegram 消息的函数
 send_telegram_message() {
     local message="$1"
-    # response=$(curl -s -X POST "https://api.telegram.org/bot$TG_TOKEN/sendMessage" -d "chat_id=$CHAT_ID" -d "text=$message")
+    response=$(curl -s -X POST "https://api.telegram.org/bot$TG_TOKEN/sendMessage" -d "chat_id=$CHAT_ID" -d "text=$message")
 
-    # # 检查响应
-    # if [[ $(echo "$response" | jq -r '.ok') == "true" ]]; then
-    #     echo "::info::Telegram消息发送成功: $message"
-    # else
-    #     echo "::error::Telegram消息发送失败: $response"
-    # fi
+    # 检查响应
+    if [[ $(echo "$response" | jq -r '.ok') == "true" ]]; then
+        echo "::info::Telegram消息发送成功: $message"
+    else
+        echo "::error::Telegram消息发送失败: $response"
+    fi
 }
 
 # 检查是否传入了参数
@@ -48,30 +48,19 @@ CHAT_ID="$3"
 while IFS= read -r line; do
     key=$(echo "$line" | jq -r '.key')
     value=$(echo "$line" | jq -r '.value')
+    #echo "原始数据: $line"
 
     if [[ -n "$key" && -n "$value" ]]; then
         key=$(echo "$key" | tr -d '"')
         value=$(echo "$value" | tr -d '"')
-
-        # 解析 domain, username, password
         IFS=',' read -r domain username password <<< "$key"
+        # 直接存储原始 value 字符串
+        servers["$domain,$username,$password"]="$value"
 
-        # 检查 value 是否是嵌套的 JSON 字符串
-        if [[ "$value" == \{* ]]; then
-            # 如果是嵌套的 JSON，将其解析为对象
-            nested_json=$(echo "$value" | jq -r .)
-            servers["$domain,$username,$password"]="$(echo "$nested_json" | jq -c .)"
-        else
-            # 直接存储原始 value 字符串
-            servers["$domain,$username,$password"]="$value"
-        fi
+        #echo "Key: $key"
+        #echo "Value: $value"
     fi
 done <<< "$(echo "$servers_json" | jq -c 'to_entries | .[] | {key: .key, value: .value}')"
-
-# # 输出解析后的内容 (调试)
-for key in "${!servers[@]}"; do
-    echo "$key => ${servers[$key]}"
-done
 
 
 # 最大检测失败次数
