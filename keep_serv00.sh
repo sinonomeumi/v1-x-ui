@@ -48,19 +48,30 @@ CHAT_ID="$3"
 while IFS= read -r line; do
     key=$(echo "$line" | jq -r '.key')
     value=$(echo "$line" | jq -r '.value')
-    #echo "原始数据: $line"
 
     if [[ -n "$key" && -n "$value" ]]; then
         key=$(echo "$key" | tr -d '"')
         value=$(echo "$value" | tr -d '"')
-        IFS=',' read -r domain username password <<< "$key"
-        # 直接存储原始 value 字符串
-        servers["$domain,$username,$password"]="$value"
 
-        #echo "Key: $key"
-        #echo "Value: $value"
+        # 解析 domain, username, password
+        IFS=',' read -r domain username password <<< "$key"
+
+        # 检查 value 是否是嵌套的 JSON 字符串
+        if [[ "$value" == \{* ]]; then
+            # 如果是嵌套的 JSON，将其解析为对象
+            nested_json=$(echo "$value" | jq -r .)
+            servers["$domain,$username,$password"]="$(echo "$nested_json" | jq -c .)"
+        else
+            # 直接存储原始 value 字符串
+            servers["$domain,$username,$password"]="$value"
+        fi
     fi
 done <<< "$(echo "$servers_json" | jq -c 'to_entries | .[] | {key: .key, value: .value}')"
+
+# # 输出解析后的内容 (调试)
+for key in "${!servers[@]}"; do
+    echo "$key => ${servers[$key]}"
+done
 
 
 # 最大检测失败次数
@@ -199,6 +210,9 @@ for server_info in "${!servers[@]}"; do
             print_status "$green" "执行远程操作完毕"
         else
             print_status "$re" "服务器状态: $server 用户名: $username 端口: $port 服务: $service 检测成功"
+	    if [ -n "$TG_TOKEN" ] && [ -n "$CHAT_ID" ]; then
+                send_telegram_message "🟢服务检测正常: $server 用户名: $username 端口: $port 服务: $service"
+            fi
         fi
 
         echo "----------------------------"
