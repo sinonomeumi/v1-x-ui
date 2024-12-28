@@ -45,14 +45,14 @@
 找到项目点 Settings -> 左边点 Secrets and variables -> 点 Actions -> 在 Secrets 增加下面变量,根据自己的数据填
 - 应用信息变量（必填）：SERVERS_JSON
 
-1、基本格式1为："IP或域名,用户名,密码":"服务标识,服务端口;vmess(服务标识符),vmess端口,Argo隧道域名,Argo隧道token或json;"
+1、基本格式1为："IP或域名,服务器用户名,密服务器码":"服务标识,服务端口;vmess(服务标识符),vmess端口,Argo隧道域名,Argo隧道token或json;"
 
 2、Argo隧道格式2为："IP或域名,用户名,密码":"服务标识,服务端口,Argo隧道域名,Argo隧道token或json"
 
 socks5标识(s5)、vmess标识(vmess)、x-ui标识(x-ui)、哪吒面板标识(nezha-dashboard)、哪吒探针标识(nezha-agent)
 ```
 {
-    "s8.serv00.com,username1,password1":"s5,10000",
+    "IP或域名,服务器用户名,密服务器码":"服务标识,服务端口",
     "s9.serv00.com,username2,password2":"s5,20000;x-ui,30000",
     "s11.serv00.com,username3,password3":"nezha-dashboard,40000;vmess,50000,vmess.abc.xyz,token"
 }
@@ -61,13 +61,13 @@ socks5标识(s5)、vmess标识(vmess)、x-ui标识(x-ui)、哪吒面板标识(ne
 - 例如：部署一台服务器，socks5一个应用
 ```
 {
-    "s8.serv00.com,username1,password1":"s5,s5应用端口"
+    "s8.serv00.com,服务器用户名,密服务器码":"s5,s5应用端口"
 }
 ```
 - 例如：部署一台服务器，vmess+Argo隧道一个应用
 ```
 {
-    "s8.serv00.com,username1,password1":"vmess,vmess应用端口,Argo隧道域名,Argo隧道token或json"
+    "s8.serv00.com,服务器用户名,密服务器码":"vmess,vmess应用端口,Argo隧道域名,Argo隧道token或json"
 }
 ```
 - 例如：部署一台服务器，socks5、vmess+Argo隧道两个应用
