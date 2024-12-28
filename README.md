@@ -63,12 +63,12 @@ socks5标识(s5)、vmess标识(vmess)、x-ui标识(x-ui)、哪吒面板标识(ne
 {
     "s8.serv00.com,username1,password1":"s5,s5应用端口"
 }
+```
 - 例如：部署一台服务器，vmess+Argo隧道一个应用
 ```
 {
     "s8.serv00.com,username1,password1":"vmess,vmess应用端口,Argo隧道域名,Argo隧道token或json"
 }
-```
 ```
 - 例如：部署一台服务器，socks5、vmess+Argo隧道两个应用
 ```
